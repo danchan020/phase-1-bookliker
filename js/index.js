@@ -1,61 +1,47 @@
-// const { createElement } = require("react/cjs/react.production.min");
 
-document.addEventListener("DOMContentLoaded", function() {});
+document.addEventListener("DOMContentLoaded", function() {
 
-const url = 'http://localhost:3000/books'
+    fetch('http://localhost:3000/books')
+    .then(r => r.json())
+    .then( booksArr => {
 
-function getBook(path){
-    fetch(path)
-    .then(resp => resp.json())
-    .then(data => {
+        renderSideContainer(booksArr)
 
-        for (const info of data) {
-            let titles = document.createElement('li')
-            let bookTitles = document.getElementById("list") 
+
+
+    })
+        const renderSideContainer = booksArr =>{
+            const sideContainer = document.querySelector('#list')
             
-            titles.textContent = info.title
-            titles.addEventListener('click', () => {
-                cards(url)
+            booksArr.forEach(bookObj => {
+                const titleEl = document.createElement('li')
+                titleEl.textContent = bookObj.title
+                sideContainer.appendChild(titleEl);
+                titleEl.addEventListener('click', () => {
+                    renderMainBookObj( bookObj )
+                })
+            const renderMainBookObj = (bookObj) => {
+                const showPanel = document.getElementById('show_panel')
+                showPanel.innerHTML = ''
+                const title = document.createElement('h1')
+                title.innerText = bookObj.title
+                const subtitle = document.createElement('h2')
+                subtitle.innerText = bookObj.subtitle
+                const description = document.createElement('p')
+                description.innerText = bookObj.description
+                const author = document.createElement('h3')
+                author.innerText = bookObj.author
+                const image = document.createElement('img')
+                image.src = bookObj.img_url
+
+                
+                showPanel.append(image, title, subtitle, description, author)
+
+
+            }
 
             })
-            bookTitles.appendChild(titles)  
+
+
         }
-    })
-}
-
-getBook(url)
-
-function cards(path){ 
-
-        let showPanel = document.getElementById("show_panel");        
-        let title = document.createElement('h3');
-        let subtitle = document.createElement('h4');
-        let description = document.createElement('p')
-        let cover = document.createElement('p')
-        let userList = document.createElement('ul')
-        let user = document.createElement('li')
-
-    fetch(path)
-    .then(resp => resp.json())
-    .then(data => {        
-        
-        for (const info of data){
-                
-            title.textContent = info.title;
-            subtitle.textContent = info.subtitle;
-            description.textContent = info.description;
-            imgURL = info.img_url
-            userList.textContent = 'Liked By:';
-                for (info.users of data)
-                        user.textContent = info.users;
-            
-        }
-        showPanel.append(title, subtitle, description, userList)
-        userList.appendChild(user)
-    
-    })
-
-
-
-
-}
+})
